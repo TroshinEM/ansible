@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+    vname:
+      - vm1
+      - vm2
+  tasks:
+    - include_tasks: ovirt-clonevm-tasks.yml
+      with_items: "{{ vname }}"
