@@ -1,0 +1,33 @@
+---
+
+  - ovirt_snapshot:
+     auth:
+      url: https://ovirt.test.local/ovirt-engine/api
+      username: username
+      password: password
+      ca_file: ca.pem
+     vm_name: "{{ item }}"
+     description: "{{ item }}-Snap"
+    register: output
+
+  - ovirt_vm_custom:
+     auth:
+      url: https://ovirt.test.local/ovirt-engine/api
+      username: username
+      password: password
+      ca_file: ca.pem
+     snapshot_name: "{{ item }}-Snap"
+     snapshot_vm: "{{ item }}"
+     name: "{{ item }}-Clone"
+     state: present
+     timeout: 3600
+
+  - ovirt_snapshot:
+     auth:
+      url: https://ovirt.test.local/ovirt-engine/api
+      username: username
+      password: password
+      ca_file: ca.pem
+     state: absent
+     vm_name: "{{ item }}"
+     snapshot_id: "{{ output.id }}"
