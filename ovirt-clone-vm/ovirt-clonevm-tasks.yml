@@ -1,20 +1,22 @@
 ---
 
-  - ovirt_snapshot:
+  - name: Create snapshot for {{ item }}
+    ovirt_snapshot:
      auth:
       url: https://ovirt.test.local/ovirt-engine/api
       username: username
-      password: password
+      password: "{{ ovirt_pass }}"
       ca_file: ca.pem
      vm_name: "{{ item }}"
      description: "{{ item }}-Snap"
     register: output
 
-  - ovirt_vm_custom:
+  - name: Clone {{ item }} to {{ item }}-Clone
+    ovirt_vm_custom:
      auth:
       url: https://ovirt.test.local/ovirt-engine/api
       username: username
-      password: password
+      password: "{{ ovirt_pass }}"
       ca_file: ca.pem
      snapshot_name: "{{ item }}-Snap"
      snapshot_vm: "{{ item }}"
@@ -22,11 +24,12 @@
      state: present
      timeout: 3600
 
-  - ovirt_snapshot:
+  - name: Remove snapshot for {{ item }}
+    ovirt_snapshot:
      auth:
       url: https://ovirt.test.local/ovirt-engine/api
       username: username
-      password: password
+      password: "{{ ovirt_pass }}"
       ca_file: ca.pem
      state: absent
      vm_name: "{{ item }}"
