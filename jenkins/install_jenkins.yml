@@ -1,0 +1,64 @@
+---
+- hosts: jenkins-servers
+  become: yes
+
+  tasks:
+
+  - name: upgrade all packages
+    yum:
+      name: '*'
+      state: latest
+
+
+  - name: Add jenkins repo
+    yum_repository:
+      name: Jenkins-stable
+      description: Jenkins stable repo
+      baseurl: http://pkg.jenkins.io/redhat-stable
+      file: jenkins-stable.repo
+      gpgcheck: yes
+  
+
+  - name: Import Key
+    rpm_key:
+       state: present
+       key: https://jenkins-ci.org/redhat/jenkins-ci.org.key
+
+
+  - name: Install java and jenkins
+    vars:
+      packages:
+      - java
+      - jenkins
+    yum:
+       name: "{{ packages }}"
+       state: latest
+
+  - name: Start jenkins service
+    service:
+      name: jenkins
+      state: started
+      enabled: yes
+
+  - name: Configure firewall
+    firewalld:
+      service: jenkins
+      permanent: yes
+      state: enabled
+
+  - name: Configure firewall 
+    firewalld:
+      port: 8080/tcp
+      permanent: yes
+      state: enabled
+
+  - name: Configure firewall
+    firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+      
+  - name: Reload firewalld service
+    service:
+      name: firewalld
+      state: reloaded
