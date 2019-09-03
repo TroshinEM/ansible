@@ -1,4 +1,15 @@
 ---
+  - name: Delete previous clone {{ item }}-Clone
+    ovirt_vm:
+     auth:
+      url: https://ovirt.test.local/ovirt-engine/api
+      username: username
+      password: "{{ ovirt_pass }}"
+      ca_file: ca.pem
+     state: absent
+     name: "{{ item }}-Clone"
+    ignore_errors: yes
+
 
   - name: Create snapshot for {{ item }}
     ovirt_snapshot:
